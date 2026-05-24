@@ -48,6 +48,34 @@
             background: #6c757d;
             color: white;
         }
+
+        #actionBtn {
+            width: 100%;
+            padding: 15px;
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+            border: 3px solid #667eea;
+            border-radius: 8px;
+            background: #667eea;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        #actionBtn:hover:not(:disabled) {
+            background: #5568d3;
+            border-color: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        #actionBtn:disabled {
+            background: #ccc;
+            border-color: #ccc;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
     </style>
 </head>
 
@@ -60,8 +88,12 @@
 
         <div id="choices"></div>
 
-        <button onclick="submit()">回答</button>
-        <button onclick="next()">次</button>
+        <button id="actionBtn" onclick="handleAction()" disabled>回答</button>
+        
+        <div id="result" style="display:none; margin-top: 20px; text-align: center;">
+            <h2 id="resultText"></h2>
+            <button onclick="restart()" style="padding: 10px 20px; font-size: 16px; cursor: pointer;">もう一度チャレンジ</button>
+        </div>
     </div>
 
     <script>
@@ -130,9 +162,11 @@
             { part: "肩", symptom: "三角筋下圧痛", answers: ["三角筋下滑液包炎"] }
         ];
 
+        let shuffledData = [];
         let index = 0;
         let selected = new Set();
         let score = 0;
+        let isAnswered = false;
 
         function shuffle(arr) {
             return arr.sort(() => Math.random() - 0.5);
@@ -150,16 +184,22 @@
         }
 
         function show() {
-            const q = quizData[index];
+            const q = shuffledData[index];
+            isAnswered = false;
 
             document.getElementById("progress").innerText =
-                (index + 1) + " / " + quizData.length;
+                (index + 1) + " / " + shuffledData.length;
 
             document.getElementById("body").innerText = q.part;
             document.getElementById("symptom").innerText = q.symptom;
 
             const choicesDiv = document.getElementById("choices");
             choicesDiv.innerHTML = "";
+
+            // ボタンを「回答」に戻し、無効化
+            const btn = document.getElementById("actionBtn");
+            btn.innerText = "回答";
+            btn.disabled = true;
 
             // 同じ部位のすべての疾患名を取得してシャッフル
             const allChoices = shuffle(getAllDiseasesForPart(q.part));
@@ -170,12 +210,16 @@
                 div.className = "choice";
 
                 div.onclick = () => {
-                    if (selected.has(choice)) {
-                        selected.delete(choice);
-                        div.classList.remove("selected");
-                    } else {
-                        selected.add(choice);
-                        div.classList.add("selected");
+                    if (!isAnswered) {
+                        if (selected.has(choice)) {
+                            selected.delete(choice);
+                            div.classList.remove("selected");
+                        } else {
+                            selected.add(choice);
+                            div.classList.add("selected");
+                        }
+                        // 選択があればボタンを有効化
+                        btn.disabled = selected.size === 0;
                     }
                 };
 
@@ -183,8 +227,18 @@
             });
         }
 
+        function handleAction() {
+            if (!isAnswered) {
+                // 回答フェーズ
+                submit();
+            } else {
+                // 次へフェーズ
+                next();
+            }
+        }
+
         function submit() {
-            const q = quizData[index];
+            const q = shuffledData[index];
             const correct = new Set(q.answers);
 
             let ok = selected.size === correct.size &&
@@ -205,17 +259,53 @@
             });
 
             selected.clear();
+            isAnswered = true;
+
+            // ボタンを「次へ」に変更
+            const btn = document.getElementById("actionBtn");
+            btn.innerText = "次へ";
+            btn.disabled = false;
         }
 
         function next() {
             index++;
-            if (index < quizData.length) {
+            if (index < shuffledData.length) {
                 show();
             } else {
-                alert("終了！ " + score + "/" + quizData.length);
+                // 終了時の処理
+                document.getElementById("progress").style.display = "none";
+                document.getElementById("body").style.display = "none";
+                document.getElementById("symptom").style.display = "none";
+                document.getElementById("choices").style.display = "none";
+                document.getElementById("actionBtn").style.display = "none";
+                
+                document.getElementById("resultText").innerText =
+                    "一周完了！ " + score + " / " + shuffledData.length + "問正解";
+                document.getElementById("result").style.display = "block";
             }
         }
 
+        function restart() {
+            // シャッフルし直す
+            shuffledData = shuffle([...quizData]);
+            index = 0;
+            score = 0;
+            selected.clear();
+            isAnswered = false;
+            
+            // 表示を元に戻す
+            document.getElementById("progress").style.display = "block";
+            document.getElementById("body").style.display = "block";
+            document.getElementById("symptom").style.display = "block";
+            document.getElementById("choices").style.display = "block";
+            document.getElementById("actionBtn").style.display = "inline-block";
+            document.getElementById("result").style.display = "none";
+            
+            show();
+        }
+
+        // 初期化: quizDataをシャッフルしてshuffledDataに格納
+        shuffledData = shuffle([...quizData]);
         show();
 
     </script>
