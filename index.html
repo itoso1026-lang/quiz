@@ -1,338 +1,225 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="format-detection" content="telephone=no">
-  <title>整形外科クイズ</title>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    html { min-height: 100%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic", Meiryo, Arial, sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      min-height: 100vh;
-      min-height: 100dvh;
-      padding: max(12px, env(safe-area-inset-top)) 12px max(12px, env(safe-area-inset-bottom));
-      color: #333;
-      font-size: 16px;
-      -webkit-text-size-adjust: 100%;
-    }
-    .container {
-      width: min(100%, 600px);
-      margin: 0 auto;
-      background: white;
-      border-radius: 20px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
-      overflow: hidden;
-    }
-    .header {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      padding: 30px 16px;
-      text-align: center;
-    }
-    .header h1 { font-size: clamp(24px, 6vw, 32px); margin-bottom: 12px; line-height: 1.25; }
-    .progress { font-size: clamp(16px, 4vw, 20px); opacity: 0.95; font-weight: 700; }
-    .quiz-content { padding: 24px 16px; }
-    .question-display {
-      background: #f8f9fa;
-      padding: 22px 12px;
-      border-radius: 14px;
-      margin-bottom: 24px;
-      text-align: center;
-      min-height: 92px;
-    }
-    .body-part { font-size: clamp(28px, 8vw, 38px); font-weight: 800; color: #667eea; margin-bottom: 10px; line-height: 1.2; }
-    .symptom { font-size: clamp(18px, 5vw, 24px); color: #555; line-height: 1.35; font-weight: 600; }
-    .choices-container { display: grid; gap: 12px; margin-bottom: 24px; }
-    .choice {
-      appearance: none;
-      -webkit-appearance: none;
-      width: 100%;
-      background: #f8f9fa;
-      border: 3px solid #e9ecef;
-      border-radius: 14px;
-      padding: 16px 12px;
-      font-size: clamp(15px, 4vw, 18px);
-      color: #222;
-      cursor: pointer;
-      transition: transform 0.08s ease, background 0.15s ease, border-color 0.15s ease;
-      min-height: 56px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      line-height: 1.35;
-      -webkit-tap-highlight-color: transparent;
-      user-select: none;
-      -webkit-user-select: none;
-      touch-action: manipulation;
-    }
-    .choice:active { transform: scale(0.985); }
-    .choice.selected { background: #667eea; color: white; border-color: #667eea; font-weight: 800; }
-    .choice.correct { background: #28a745; color: white; border-color: #28a745; font-weight: 800; }
-    .choice.incorrect { background: #dc3545; color: white; border-color: #dc3545; font-weight: 800; }
-    .choice.missed { background: #6c757d; color: white; border-color: #6c757d; font-weight: 800; }
-    .choice.disabled { cursor: default; opacity: 0.9; }
-    .button-container { display: flex; gap: 12px; margin-top: 18px; }
-    .btn {
-      flex: 1;
-      padding: 17px 12px;
-      font-size: clamp(18px, 5vw, 22px);
-      font-weight: 800;
-      border: none;
-      border-radius: 14px;
-      cursor: pointer;
-      min-height: 58px;
-      -webkit-tap-highlight-color: transparent;
-      touch-action: manipulation;
-    }
-    .btn:active { transform: scale(0.985); }
-    .btn-primary { background: #667eea; color: white; }
-    .btn-success { background: #28a745; color: white; }
-    .btn-secondary { background: #6c757d; color: white; }
-    .result-message { text-align: center; padding: 16px; border-radius: 12px; margin-bottom: 18px; font-size: 18px; font-weight: 800; }
-    .result-message.correct { background: #d4edda; color: #155724; border: 2px solid #28a745; }
-    .result-message.incorrect { background: #f8d7da; color: #721c24; border: 2px solid #dc3545; }
-    .final-score { text-align: center; padding: 40px 16px; }
-    .final-score h2 { font-size: 30px; color: #667eea; margin-bottom: 20px; }
-    .score-display { font-size: 42px; font-weight: 900; color: #28a745; margin-bottom: 30px; }
-    .legend { background: #f8f9fa; padding: 14px; border-radius: 12px; margin-bottom: 18px; font-size: 15px; }
-    .legend-item { display: flex; align-items: center; margin-bottom: 8px; }
-    .legend-item:last-child { margin-bottom: 0; }
-    .legend-color { width: 28px; height: 28px; border-radius: 6px; margin-right: 10px; flex-shrink: 0; }
-    .hidden { display: none !important; }
-    .no-script { padding: 16px; margin-bottom: 16px; background: #fff3cd; border: 2px solid #ffc107; border-radius: 12px; color: #664d03; font-weight: 700; line-height: 1.5; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>整形外科クイズ</title>
+
+    <style>
+        body {
+            font-family: sans-serif;
+            background: #667eea;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+        }
+
+        .choice {
+            padding: 10px;
+            margin: 8px 0;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .selected {
+            background: #667eea;
+            color: white;
+        }
+
+        .correct {
+            background: #28a745;
+            color: white;
+        }
+
+        .incorrect {
+            background: #dc3545;
+            color: white;
+        }
+
+        .missed {
+            background: #6c757d;
+            color: white;
+        }
+    </style>
 </head>
+
 <body>
-  <div class="container">
-    <div class="header">
-      <h1>整形外科クイズ</h1>
-      <div class="progress" id="progress">問題 1 / 22</div>
+
+    <div class="container">
+        <h2 id="progress"></h2>
+        <h3 id="body"></h3>
+        <p id="symptom"></p>
+
+        <div id="choices"></div>
+
+        <button onclick="submit()">回答</button>
+        <button onclick="next()">次</button>
     </div>
-    <div class="quiz-content">
-      <noscript><div class="no-script">このクイズはJavaScriptを使用します。iPhoneの「ファイル」アプリのプレビューで動かない場合は、共有ボタンからSafariで開いてください。</div></noscript>
-      <div id="quiz-area">
-        <div class="question-display">
-          <div class="body-part" id="body-part">読み込み中</div>
-          <div class="symptom" id="symptom">少しお待ちください</div>
-        </div>
-        <div id="legend" class="legend hidden">
-          <div class="legend-item"><div class="legend-color" style="background: #28a745;"></div><span>✅ 正解（選択済み）</span></div>
-          <div class="legend-item"><div class="legend-color" style="background: #dc3545;"></div><span>❌ 不正解（誤って選択）</span></div>
-          <div class="legend-item"><div class="legend-color" style="background: #6c757d;"></div><span>⬜ 正解（未選択）</span></div>
-        </div>
-        <div id="result-message"></div>
-        <div id="choices" class="choices-container"></div>
-        <div class="button-container">
-          <button type="button" class="btn btn-primary" id="submit-btn">回答する</button>
-          <button type="button" class="btn btn-success hidden" id="next-btn">次の問題</button>
-        </div>
-      </div>
-      <div id="final-screen" class="final-score hidden">
-        <h2>クイズ終了！</h2>
-        <div class="score-display" id="final-score"></div>
-        <button type="button" class="btn btn-secondary" id="restart-btn">もう一度挑戦</button>
-      </div>
-    </div>
-  </div>
 
-  <script>
-  (function () {
-    'use strict';
+    <script>
 
-    var quizData = [
-      { part: "腰", symptom: "前屈時痛", answers: ["腰椎椎間板症", "筋筋膜症", "腰椎挫傷"] },
-      { part: "腰", symptom: "後屈時痛", answers: ["椎弓欠損", "骨折症", "腰椎椎間板症", "腰椎すべり症", "分離症", "椎間関節症", "腰椎挫傷"] },
-      { part: "腰", symptom: "回旋時痛", answers: ["筋筋膜症", "椎間関節症", "すべり症", "分離症", "腰椎挫傷"] },
-      { part: "腰", symptom: "仙腸関節の痛み", answers: ["腰椎椎間板症", "仙腸関節可動域制限", "下肢症"] },
-      { part: "腰", symptom: "下肢の放散痛", answers: ["腰椎椎間板症", "椎柱管狭窄症", "梨状筋症候群"] },
-      { part: "腰", symptom: "歩行時の痛み", answers: ["筋筋膜症", "椎間孔狭窄症", "椎間関節症", "腰椎すべり症", "分離症"] },
-      { part: "腰", symptom: "尾骨の痛み", answers: ["外傷性", "腰椎椎間板症"] },
-      { part: "肩", symptom: "回内>回外での痛み", answers: ["広背筋痙縮"] },
-      { part: "肩", symptom: "回外>回内での痛み", answers: ["インピンジメント症候群(二頭筋長頭腱)", "インピンジメント症候群(棘上筋)", "インピンジメント症候群(三角筋下滑液包)"] },
-      { part: "肩", symptom: "投球動作痛", answers: ["インピンジメント症候群", "関節唇損傷", "腱板炎", "腱板部分断裂"] },
-      { part: "首", symptom: "前屈時痛", answers: ["筋筋膜症", "頚椎椎間板症"] },
-      { part: "首", symptom: "後屈時痛", answers: ["筋筋膜症", "椎間孔狭窄症", "椎間関節症"] },
-      { part: "首", symptom: "回旋時痛", answers: ["筋筋膜症", "椎間孔狭窄症", "椎間関節症", "ルシュカ関節炎", "頚椎すべり症"] },
-      { part: "首", symptom: "上肢への放散痛", answers: ["頚椎椎間板症", "椎柱管狭窄症", "肩甲上神経症候群(斜角筋)", "肩甲上神経症候群(小胸筋)"] },
-      { part: "首", symptom: "極度のROM低下", answers: ["頚椎挫傷", "頚椎椎間板症", "OPLL"] },
-      { part: "首", symptom: "肩甲間部の痛み・コリ", answers: ["頚椎椎間板症", "筋筋膜症"] },
-      { part: "膝", symptom: "歩行時・荷重時痛", answers: ["変形性膝関節症", "半月板障害", "鵞足炎"] },
-      { part: "膝", symptom: "ジャンプ着地時からの急性痛", answers: ["半月板障害", "前十字靭帯損傷"] },
-      { part: "膝", symptom: "膝後部の痛み", answers: ["後十字靭帯損傷", "半月板障害", "膝部椎間板症"] },
-      { part: "膝", symptom: "膝内側の痛み", answers: ["変形性膝関節症", "半月板障害(内側)", "鵞足炎", "内側側副靭帯損傷"] },
-      { part: "膝", symptom: "膝外側の痛み", answers: ["変形性膝関節症", "半月板障害(外側)", "外側側副靭帯損傷"] },
-      { part: "膝", symptom: "膝蓋骨周囲の痛み", answers: ["膝蓋大腿関節症", "オスグットシュラッター病", "膝蓋骨脱臼", "タナ障害"] }
-    ];
+        const quizData = [
 
-    var currentQuestionIndex = 0;
-    var score = 0;
-    var selectedChoices = [];
-    var isAnswered = false;
-    var allDiseases = [];
+            { part: "首", symptom: "前屈時痛", answers: ["筋筋膜症", "頚椎椎間板症"] },
+            { part: "首", symptom: "後屈時痛", answers: ["筋筋膜症", "頚椎椎間板症", "椎間孔狭窄", "頚椎椎間関節炎", "ルシュカ関節炎", "頚椎すべり症"] },
+            { part: "首", symptom: "回旋時痛", answers: ["筋筋膜症", "椎間孔狭窄", "頚椎椎間関節炎", "ルシュカ関節炎", "頚椎すべり症"] },
+            { part: "首", symptom: "上肢への放散痛・しびれ", answers: ["頚椎椎間板症", "椎間孔狭窄", "胸郭出口症候群"] },
+            { part: "首", symptom: "頭から腕への放散", answers: ["椎間孔狭窄"] },
+            { part: "首", symptom: "極度の可動域低下", answers: ["頚椎捻挫", "頚椎椎間板症", "OPLL"] },
+            { part: "首", symptom: "肩甲間部のコリ", answers: ["頚椎椎間板症", "筋筋膜症"] },
+            { part: "首", symptom: "頭上挙上で症状悪化", answers: ["椎間板障害"] },
+            { part: "首", symptom: "棘突起圧痛", answers: ["椎間板障害"] },
+            { part: "首", symptom: "腕挙上で症状出現", answers: ["胸郭出口症候群"] },
+            { part: "首", symptom: "アドソンテスト陽性", answers: ["胸郭出口症候群"] },
+            { part: "首", symptom: "ライトテスト陽性", answers: ["胸郭出口症候群"] },
+            { part: "腰", symptom: "前屈時痛", answers: ["椎間板症（ヘルニア）", "腰椎挫傷", "筋筋膜症"] },
+            { part: "腰", symptom: "後屈時痛", answers: ["分離症", "すべり症", "脊柱管狭窄症", "椎間関節症", "椎間板症（ヘルニア）"] },
+            { part: "腰", symptom: "回旋時痛", answers: ["筋筋膜症", "椎間関節症", "分離症"] },
+            { part: "腰", symptom: "仙腸関節の痛み", answers: ["椎間板症（ヘルニア）", "仙腸関節可動域低下"] },
+            { part: "腰", symptom: "下肢への放散痛", answers: ["ヘルニア", "梨状筋症候群", "脊柱管狭窄症"] },
+            { part: "腰", symptom: "歩行時痛", answers: ["筋筋膜症", "脊柱管狭窄症", "椎間関節症", "分離症", "すべり症"] },
+            { part: "腰", symptom: "尾骨の痛み", answers: ["外傷性", "ヘルニア"] },
+            { part: "腰", symptom: "股関節屈曲位回旋で痛み", answers: ["脊柱管狭窄症", "分離症", "すべり症"] },
+            { part: "腰", symptom: "腰椎伸展位回旋で痛み", answers: ["ヘルニア"] },
+            { part: "腰", symptom: "腰椎伸展可動域低下", answers: ["脊柱管狭窄症"] },
+            { part: "腰", symptom: "SLR 0〜35°で痛み", answers: ["重度ヘルニア", "神経根障害"] },
+            { part: "腰", symptom: "SLR 35〜70°で痛み", answers: ["ヘルニア"] },
+            { part: "腰", symptom: "SLR 70°以上で痛み", answers: ["椎間関節症", "仙腸関節障害"] },
+            { part: "腰", symptom: "ケンプテスト同側痛", answers: ["椎間関節症"] },
+            { part: "腰", symptom: "ケンプテスト反対側痛", answers: ["椎間板障害"] },
+            { part: "腰", symptom: "棘突起圧痛", answers: ["椎間板障害"] },
+            { part: "腰", symptom: "筋力低下（膝伸展・足背屈）", answers: ["ヘルニア"] },
+            { part: "腰", symptom: "知覚異常（腰〜下肢）", answers: ["ヘルニア", "神経障害"] },
+            { part: "膝", symptom: "歩行時・荷重時痛", answers: ["変形性膝関節症", "半月板障害", "鵞足炎"] },
+            { part: "膝", symptom: "ジャンプ着地時の痛み", answers: ["半月板障害", "前十字靭帯損傷"] },
+            { part: "膝", symptom: "膝後部の痛み", answers: ["後十字靭帯損傷", "半月板障害", "腰椎椎間板症"] },
+            { part: "膝", symptom: "膝内側の痛み", answers: ["変形性膝関節症", "半月板障害（内側）", "鵞足炎", "内側側副靭帯損傷"] },
+            { part: "膝", symptom: "膝外側の痛み", answers: ["変形性膝関節症", "半月板障害（外側）", "外側側副靭帯損傷"] },
+            { part: "膝", symptom: "膝蓋骨周囲の痛み", answers: ["オスグッドシュラッター病", "膝蓋大腿関節症", "膝蓋骨脱臼", "タナ障害"] },
+            { part: "膝", symptom: "PFジャンプテスト", answers: ["膝蓋軟骨症", "ジャンパー膝", "分裂膝蓋骨"] },
+            { part: "膝", symptom: "FTテスト", answers: ["変形性膝関節症", "半月板障害", "腸脛靭帯炎", "鵞足炎"] },
+            { part: "膝", symptom: "マクマレーテスト", answers: ["内側半月板", "外側半月板"] },
+            { part: "肩", symptom: "回内＞回外", answers: ["広背筋短縮"] },
+            { part: "肩", symptom: "回外＞回内", answers: ["インピンジメント症候群", "二頭筋長頭腱炎", "棘上筋障害", "三角筋下滑液包炎"] },
+            { part: "肩", symptom: "回内＝回外", answers: ["腱板炎", "腱板部分断裂", "滑液包炎", "拘縮性肩関節炎"] },
+            { part: "肩", symptom: "他動＞自動", answers: ["インピンジメント症候群", "二頭筋長頭腱炎", "棘上筋障害", "三角筋下滑液包炎"] },
+            { part: "肩", symptom: "他動＝自動", answers: ["腱板炎", "滑液包炎", "拘縮性肩関節炎"] },
+            { part: "肩", symptom: "エンドフィールあり", answers: ["拘縮性肩関節炎"] },
+            { part: "肩", symptom: "エンドフィールなし", answers: ["腱板炎", "滑液包炎"] },
+            { part: "肩", symptom: "投球動作痛", answers: ["インピンジメント症候群", "関節唇損傷", "腱板炎", "腱板部分断裂"] },
+            { part: "肩", symptom: "ROM内で痛み(ペインフルアーク)", answers: ["インピンジメント症候群", "腱板炎", "滑液包炎"] },
+            { part: "肩", symptom: "回外で痛み", answers: ["腱板炎", "滑液包炎", "広背筋短縮"] },
+            { part: "肩", symptom: "スピードテスト陽性", answers: ["二頭筋長頭腱炎"] },
+            { part: "肩", symptom: "ヤーガソンテスト陽性", answers: ["二頭筋腱炎"] },
+            { part: "肩", symptom: "擦過音あり", answers: ["拘縮性肩関節炎", "腱板炎", "腱板部分断裂", "二頭筋長頭腱炎"] },
+            { part: "肩", symptom: "自動挙上で痛み", answers: ["インピンジメント症候群"] },
+            { part: "肩", symptom: "Apley内旋で痛み", answers: ["インピンジメント症候群", "腱板炎", "滑液包炎"] },
+            { part: "肩", symptom: "Apley外旋で痛み", answers: ["腱板炎", "滑液包炎", "広背筋短縮"] },
+            { part: "肩", symptom: "抵抗運動で痛み", answers: ["腱板炎", "滑液包炎"] },
+            { part: "肩", symptom: "ジョブテストで改善（消失）", answers: ["棘上筋インピンジメント"] },
+            { part: "肩", symptom: "棘上筋腱圧痛", answers: ["棘上筋障害"] },
+            { part: "肩", symptom: "結節間溝圧痛", answers: ["二頭筋長頭腱炎"] },
+            { part: "肩", symptom: "三角筋下圧痛", answers: ["三角筋下滑液包炎"] }
+        ];
 
-    function byId(id) { return document.getElementById(id); }
+        let index = 0;
+        let selected = new Set();
+        let score = 0;
 
-    function addUnique(list, value) {
-      if (list.indexOf(value) === -1) list.push(value);
-    }
-
-    function extractAllDiseases() {
-      var diseases = [];
-      for (var i = 0; i < quizData.length; i++) {
-        for (var j = 0; j < quizData[i].answers.length; j++) {
-          addUnique(diseases, quizData[i].answers[j]);
+        function shuffle(arr) {
+            return arr.sort(() => Math.random() - 0.5);
         }
-      }
-      return diseases;
-    }
 
-    function shuffleArray(array) {
-      var shuffled = array.slice(0);
-      for (var i = shuffled.length - 1; i > 0; i--) {
-        var j = Math.floor(Math.random() * (i + 1));
-        var temp = shuffled[i];
-        shuffled[i] = shuffled[j];
-        shuffled[j] = temp;
-      }
-      return shuffled;
-    }
-
-    function generateChoices() {
-      var currentQuestion = quizData[currentQuestionIndex];
-      var correctAnswers = currentQuestion.answers;
-      var incorrectChoices = [];
-      for (var i = 0; i < allDiseases.length; i++) {
-        if (correctAnswers.indexOf(allDiseases[i]) === -1) incorrectChoices.push(allDiseases[i]);
-      }
-      var numIncorrect = Math.floor(Math.random() * 5) + 8;
-      var selectedIncorrect = shuffleArray(incorrectChoices).slice(0, numIncorrect);
-      return shuffleArray(correctAnswers.concat(selectedIncorrect));
-    }
-
-    function toggleChoice(choiceText, element) {
-      if (isAnswered) return;
-      var index = selectedChoices.indexOf(choiceText);
-      if (index !== -1) {
-        selectedChoices.splice(index, 1);
-        element.className = element.className.replace(/\s?selected/g, '');
-        element.setAttribute('aria-pressed', 'false');
-      } else {
-        selectedChoices.push(choiceText);
-        if (element.className.indexOf('selected') === -1) element.className += ' selected';
-        element.setAttribute('aria-pressed', 'true');
-      }
-    }
-
-    function displayQuestion() {
-      var currentQuestion = quizData[currentQuestionIndex];
-      byId('body-part').textContent = currentQuestion.part;
-      byId('symptom').textContent = currentQuestion.symptom;
-      byId('progress').textContent = '問題 ' + (currentQuestionIndex + 1) + ' / ' + quizData.length;
-
-      var choices = generateChoices();
-      var choicesContainer = byId('choices');
-      choicesContainer.innerHTML = '';
-
-      for (var i = 0; i < choices.length; i++) {
-        (function (choice) {
-          var choiceButton = document.createElement('button');
-          choiceButton.type = 'button';
-          choiceButton.className = 'choice';
-          choiceButton.textContent = choice;
-          choiceButton.setAttribute('data-choice', choice);
-          choiceButton.setAttribute('aria-pressed', 'false');
-          choiceButton.onclick = function () { toggleChoice(choice, choiceButton); };
-          choicesContainer.appendChild(choiceButton);
-        })(choices[i]);
-      }
-
-      selectedChoices = [];
-      isAnswered = false;
-      byId('submit-btn').className = 'btn btn-primary';
-      byId('next-btn').className = 'btn btn-success hidden';
-      byId('result-message').innerHTML = '';
-      byId('result-message').className = '';
-      byId('legend').className = 'legend hidden';
-      window.scrollTo(0, 0);
-    }
-
-    function submitAnswer() {
-      if (isAnswered) return;
-      var currentQuestion = quizData[currentQuestionIndex];
-      var correctAnswers = currentQuestion.answers;
-      var isCorrect = selectedChoices.length === correctAnswers.length;
-
-      for (var i = 0; i < selectedChoices.length; i++) {
-        if (correctAnswers.indexOf(selectedChoices[i]) === -1) isCorrect = false;
-      }
-      if (isCorrect) score++;
-
-      var choiceElements = document.querySelectorAll('.choice');
-      for (var c = 0; c < choiceElements.length; c++) {
-        var element = choiceElements[c];
-        var choiceText = element.textContent || element.innerText;
-        element.className = element.className.replace(/\s?selected/g, '');
-        element.className += ' disabled';
-        element.disabled = true;
-        if (correctAnswers.indexOf(choiceText) !== -1) {
-          if (selectedChoices.indexOf(choiceText) !== -1) element.className += ' correct';
-          else element.className += ' missed';
-        } else if (selectedChoices.indexOf(choiceText) !== -1) {
-          element.className += ' incorrect';
+        function getAllDiseasesForPart(part) {
+            // 指定された部位のすべての疾患名を重複なく取得
+            const diseases = new Set();
+            quizData.forEach(q => {
+                if (q.part === part) {
+                    q.answers.forEach(disease => diseases.add(disease));
+                }
+            });
+            return Array.from(diseases);
         }
-      }
 
-      var resultDiv = byId('result-message');
-      resultDiv.className = 'result-message ' + (isCorrect ? 'correct' : 'incorrect');
-      resultDiv.textContent = isCorrect ? '✅ 正解です！' : '❌ 不正解です';
-      byId('legend').className = 'legend';
-      isAnswered = true;
-      byId('submit-btn').className = 'btn btn-primary hidden';
-      byId('next-btn').className = 'btn btn-success';
-    }
+        function show() {
+            const q = quizData[index];
 
-    function nextQuestion() {
-      currentQuestionIndex++;
-      if (currentQuestionIndex < quizData.length) displayQuestion();
-      else showFinalScore();
-    }
+            document.getElementById("progress").innerText =
+                (index + 1) + " / " + quizData.length;
 
-    function showFinalScore() {
-      byId('quiz-area').className = 'hidden';
-      byId('final-screen').className = 'final-score';
-      var percentage = Math.round((score / quizData.length) * 100);
-      byId('final-score').textContent = score + ' / ' + quizData.length + ' (' + percentage + '%)';
-      window.scrollTo(0, 0);
-    }
+            document.getElementById("body").innerText = q.part;
+            document.getElementById("symptom").innerText = q.symptom;
 
-    function restartQuiz() {
-      currentQuestionIndex = 0;
-      score = 0;
-      byId('quiz-area').className = '';
-      byId('final-screen').className = 'final-score hidden';
-      displayQuestion();
-    }
+            const choicesDiv = document.getElementById("choices");
+            choicesDiv.innerHTML = "";
 
-    function initQuiz() {
-      allDiseases = extractAllDiseases();
-      byId('submit-btn').onclick = submitAnswer;
-      byId('next-btn').onclick = nextQuestion;
-      byId('restart-btn').onclick = restartQuiz;
-      displayQuestion();
-    }
+            // 同じ部位のすべての疾患名を取得してシャッフル
+            const allChoices = shuffle(getAllDiseasesForPart(q.part));
 
-    if (document.readyState === 'complete' || document.readyState === 'interactive') {
-      setTimeout(initQuiz, 0);
-    } else if (document.addEventListener) {
-      document.addEventListener('DOMContentLoaded', initQuiz, false);
-    } else {
-      window.onload = initQuiz;
-    }
-  })();
-  </script>
+            allChoices.forEach(choice => {
+                const div = document.createElement("div");
+                div.innerText = choice;
+                div.className = "choice";
+
+                div.onclick = () => {
+                    if (selected.has(choice)) {
+                        selected.delete(choice);
+                        div.classList.remove("selected");
+                    } else {
+                        selected.add(choice);
+                        div.classList.add("selected");
+                    }
+                };
+
+                choicesDiv.appendChild(div);
+            });
+        }
+
+        function submit() {
+            const q = quizData[index];
+            const correct = new Set(q.answers);
+
+            let ok = selected.size === correct.size &&
+                [...selected].every(x => correct.has(x));
+
+            if (ok) score++;
+
+            document.querySelectorAll(".choice").forEach(div => {
+                const text = div.innerText;
+
+                if (correct.has(text)) {
+                    if (selected.has(text)) div.classList.add("correct");
+                    else div.classList.add("missed");
+                } else if (selected.has(text)) {
+                    div.classList.add("incorrect");
+                }
+                div.onclick = null;
+            });
+
+            selected.clear();
+        }
+
+        function next() {
+            index++;
+            if (index < quizData.length) {
+                show();
+            } else {
+                alert("終了！ " + score + "/" + quizData.length);
+            }
+        }
+
+        show();
+
+    </script>
+
 </body>
+
 </html>
